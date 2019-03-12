@@ -3,8 +3,8 @@ const Promise = require('bluebird')
 
 const api = require('./api')
 
-function encrypt (context, data) {
-  return api.newKey(context)
+function encrypt (host, context, data) {
+  return api.newKey(host, context)
     .then((response) => {
       /*
        * Prepare, generate a unique IV and get a new key to use
@@ -38,7 +38,7 @@ function encrypt (context, data) {
     })
 }
 
-function decrypt (encrypted) {
+function decrypt (host, encrypted) {
   if (encrypted === undefined || encrypted === null) {
     return Promise.reject(new Error('Encrypted string not valid'))
   }
@@ -50,7 +50,7 @@ function decrypt (encrypted) {
   }
 
   // 0: IV, 1: Encrypted data, 2: Key id, 3: Auth tag
-  return api.getKey(parts[2])
+  return api.getKey(host, parts[2])
     .then((response) => {
       let iv = Buffer.from(parts[0], 'base64')
       let tmpKey = response.key
@@ -76,8 +76,8 @@ function decrypt (encrypted) {
     })
 }
 
-function doHMAC (data) {
-  return api.newKey('hmac')
+function doHMAC (host, data) {
+  return api.newKey(host, 'hmac')
     .then((response) => {
       let hmac = crypto.createHmac('sha256', response.key)
       hmac.update(data)

@@ -1,15 +1,12 @@
 const request = require('request-promise')
 
-// TODO: Depend on environment variable
-const KEYRULER_INSTANCE_HOST = 'http://localhost:3004'
-
-function newKey (context) {
+function newKey (host, context) {
   const contextParam = encodeURIComponent(context)
-  return request.post(`${KEYRULER_INSTANCE_HOST}/newKey?context=${contextParam}`, { json: true })
+  return request.post(`${host}/newKey?context=${contextParam}`, { json: true })
 }
 
-function getKey (keyId) {
-  return request.get(`${KEYRULER_INSTANCE_HOST}/getKey`, { qs: { kid: keyId }, json: true })
+function getKey (host, keyId) {
+  return request.get(`${host}/getKey`, { qs: { kid: keyId }, json: true })
 }
 
 module.exports = {

@@ -1,11 +1,12 @@
 const assert = require('assert')
 const nock = require('nock')
 
+const KEYRULER_HOST = 'http://localhost:3004'
 const keyruler = require('../src/index')
 
 describe('Basic tests', () => {
   before(() => {
-    nock('http://localhost:3004')
+    nock(KEYRULER_HOST)
       .post('/newKey')
       .query({ context: /\w+/gi })
       .reply(200, { kid: 'this_is_a_kid', key: 'a2V5X3dpdGhfcmVxdWlyZWRfbGVuZ3RoX29mXzMyX18=' })
@@ -17,17 +18,17 @@ describe('Basic tests', () => {
 
   it('Encrypt -> Decrypt', async () => {
     const plain = 'THIS IS SOME PLAIN TEXT'
-    const encrypted = await keyruler.encrypt('test_context', plain)
-    const decrypted = await keyruler.decrypt(encrypted)
+    const encrypted = await keyruler.encrypt(KEYRULER_HOST, 'test_context', plain)
+    const decrypted = await keyruler.decrypt(KEYRULER_HOST, encrypted)
 
     assert.strictEqual(decrypted, plain)
   })
 
   it('Encrypted string not valid', async () => {
     const fakeEncrypted = 'iv_base64:encrypted_data:kid' // Missing auth tag
-    assertThrowsAsync(() => keyruler.decrypt(fakeEncrypted))
-    assertThrowsAsync(() => keyruler.decrypt(null))
-    assertThrowsAsync(() => keyruler.decrypt(undefined))
+    assertThrowsAsync(() => keyruler.decrypt(KEYRULER_HOST, fakeEncrypted))
+    assertThrowsAsync(() => keyruler.decrypt(KEYRULER_HOST, null))
+    assertThrowsAsync(() => keyruler.decrypt(KEYRULER_HOST, undefined))
   })
 })
 

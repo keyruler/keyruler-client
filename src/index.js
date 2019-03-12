@@ -1,7 +1,6 @@
 const crypto = require('crypto')
 const Promise = require('bluebird')
 
-// TODO: Can we mock this require in testing?
 const api = require('./api')
 
 function encrypt (context, data) {
@@ -43,9 +42,7 @@ function decrypt (encrypted) {
   if (encrypted === undefined || encrypted === null) {
     return Promise.reject(new Error('Encrypted string not valid'))
   }
-  /*
-   * TODO error handling, invalid count etc
-   */
+
   const parts = encrypted.split(':')
 
   if (parts.length !== 4) {

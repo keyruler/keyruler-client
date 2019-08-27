@@ -52,10 +52,10 @@ function decrypt (host, encrypted) {
   // 0: IV, 1: Encrypted data, 2: Key id, 3: Auth tag
   return api.getKey(host, parts[2])
     .then((response) => {
-      let iv = Buffer.from(parts[0], 'base64')
-      let tmpKey = response.key
+      const iv = Buffer.from(parts[0], 'base64')
+      const tmpKey = response.key
 
-      let decipher = crypto.createDecipheriv('aes-256-gcm', Buffer.from(tmpKey, 'base64'), iv)
+      const decipher = crypto.createDecipheriv('aes-256-gcm', Buffer.from(tmpKey, 'base64'), iv)
 
       /*
        * Set the AAD and authtag
@@ -79,7 +79,7 @@ function decrypt (host, encrypted) {
 function doHMAC (host, data) {
   return api.newKey(host, 'hmac')
     .then((response) => {
-      let hmac = crypto.createHmac('sha256', response.key)
+      const hmac = crypto.createHmac('sha256', response.key)
       hmac.update(data)
       return hmac.digest('hex')
     })
